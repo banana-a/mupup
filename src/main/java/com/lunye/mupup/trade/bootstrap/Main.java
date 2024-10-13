@@ -1,8 +1,10 @@
 package com.lunye.mupup.trade.bootstrap;
 
 import com.lunye.mupup.trade.TradeContext;
+import com.lunye.mupup.trade.dataloader.StockData;
 import com.lunye.mupup.trade.entity.Account;
 import com.lunye.mupup.trade.entity.TradeTax;
+import com.lunye.mupup.trade.retest.DailyRecord;
 import com.lunye.mupup.trade.retest.DataSource;
 import com.lunye.mupup.trade.retest.RetestEngine;
 import com.lunye.mupup.trade.retest.RetestResult;
@@ -13,6 +15,9 @@ import com.lunye.mupup.trade.strategy.sell.DefaultSellStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.lunye.mupup.trade.dataloader.ExcelParser.parseExcel;
 
 public class Main {
 
@@ -54,7 +59,22 @@ public class Main {
     }
 
     private static DataSource initDataSource() {
-        return null;
+        String excelFilePath = "历史数据.xlsx"; // Excel文件路径
+        List<StockData> stockDataList = parseExcel(excelFilePath);
+        List<DailyRecord> dailyRecordList = stockDataList.stream().map(Main::convertDailyRecord).collect(Collectors.toList());
+        DataSource dataSource = new DataSource();
+        dataSource.setDailyRecordList(dailyRecordList);
+        return dataSource;
+    }
+
+    private static DailyRecord convertDailyRecord(StockData item){
+        DailyRecord dailyRecord = new DailyRecord();
+        dailyRecord.setDate(item.getDate());
+        dailyRecord.setStartPrice(item.getOpen());
+        dailyRecord.setEndPrice(item.getClose());
+        dailyRecord.setMaxPrice(item.getHigh());
+        dailyRecord.setMinPrice(item.getLow());
+        return dailyRecord;
     }
 
     private static StrategyGroup initStrategyGroup() {
