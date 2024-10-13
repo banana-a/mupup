@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class TradeActionParam {
 
+    // 1买，2卖
     private Integer tradeType;
 
     private Double price;

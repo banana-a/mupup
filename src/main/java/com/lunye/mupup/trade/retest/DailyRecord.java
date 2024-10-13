@@ -11,4 +11,8 @@ public class DailyRecord {
 
     private Double endPrice;
 
+    private Double maxPrice;
+
+    private Double minPrice;
+
 }

@@ -1,7 +1,10 @@
 package com.lunye.mupup.trade.entity;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class Account {
 
     // 启动资金
@@ -12,9 +15,6 @@ public class Account {
 
     // 股数
     private Integer stockCount;
-
-    // 平均成本价
-    private Double costPrice;
 
     // 买记录
     private List<Double> buyRecord;
@@ -33,6 +33,37 @@ public class Account {
     // 仓位
     private Double getPosition(Double stockPrice){
         return stockPrice * stockCount / getAllAsserts(stockPrice);
+    }
+
+    // 购买
+    public void buy(TradeActionParam param){
+        if (checkParam(param)){
+            stockCount += param.getCount();
+            remainAssets -= param.getPrice() * param.getCount();
+            remainAssets -= getTex(param);
+        }
+    }
+
+    // 售卖
+    public void sell(TradeActionParam param){
+        if (checkParam(param)){
+            stockCount -= param.getCount();
+            remainAssets += param.getPrice() * param.getCount();
+            remainAssets -= getTex(param);
+        }
+    }
+
+    private Double getTex(TradeActionParam param) {
+        double cost = param.getPrice() * param.getCount();
+        double res = tradeTax.getTax1() * cost + tradeTax.getTax3() * cost;
+        if (param.getTradeType() == 2){
+            res += tradeTax.getTax2() * cost;
+        }
+        return res;
+    }
+
+    private boolean checkParam(TradeActionParam param) {
+        return true;
     }
 
 }
