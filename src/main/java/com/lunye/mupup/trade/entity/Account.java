@@ -16,6 +16,9 @@ public class Account {
     // 股数
     private Integer stockCount;
 
+    // 可用股数
+    private Integer canUseStockCount;
+
     // 买记录
     private List<Double> buyRecord;
 

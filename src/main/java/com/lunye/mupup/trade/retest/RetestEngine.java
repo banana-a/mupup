@@ -18,6 +18,7 @@ public class RetestEngine {
             for (TradeActionParam actionParam : tradeActionParam) {
                 tradeManager.doTrade(context,i,actionParam);
             }
+            // 天级别收益统计
         }
 //        saveResult(context);
     }

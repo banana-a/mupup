@@ -12,8 +12,10 @@ public class TradeManager {
         switch (tradeActionParam.getTradeType()){
             case 1:
                 buy(context,i,tradeActionParam);
+                break;
             case 2:
                 sell(context,i,tradeActionParam);
+                break;
         }
     }
 
@@ -33,11 +35,11 @@ public class TradeManager {
         Account account = context.getAccount();
         Double price = param.getPrice();
         DailyRecord dailyRecord = context.getDataSource().getDailyRecordList().get(i);
-        if (price <= dailyRecord.getMaxPrice() || price >= dailyRecord.getMinPrice()){
+        if (price <= dailyRecord.getMaxPrice() && price >= dailyRecord.getMinPrice()){
             account.sell(param);
-            System.out.printf("第%d天，尝试以%.2f价格卖出入成功，最高价为%.2f，最低价为%.2f%n", i, price, dailyRecord.getMaxPrice(), dailyRecord.getMinPrice());
+            System.out.printf("第%d天，尝试以%.3f价格卖出成功，最高价为%.3f，最低价为%.3f%n", i, price, dailyRecord.getMaxPrice(), dailyRecord.getMinPrice());
         } else {
-            System.out.printf("第%d天，尝试以%.2f价格买入失败，最高价为%.2f，最低价为%.2f%n", i, price, dailyRecord.getMaxPrice(), dailyRecord.getMinPrice());
+            System.out.printf("第%d天，尝试以%.3f价格买入失败，最高价为%.3f，最低价为%.3f%n", i, price, dailyRecord.getMaxPrice(), dailyRecord.getMinPrice());
         }
     }
 
