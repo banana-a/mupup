@@ -31,7 +31,7 @@ public class DefaultSellStrategy implements Strategy {
         param.setTradeType(1);
 
         double originalPrice = startPrice * 1.01;
-        double adjustedPrice = Math.floor(originalPrice * 100) / 100.0;
+        double adjustedPrice = Math.floor(originalPrice * 1000) / 1000.0;
         param.setPrice(adjustedPrice);
         param.setPrice(adjustedPrice);
 

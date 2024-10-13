@@ -1,6 +1,7 @@
 package com.lunye.mupup.trade.bootstrap;
 
 import com.lunye.mupup.trade.TradeContext;
+import com.lunye.mupup.trade.dataloader.ExcelParser;
 import com.lunye.mupup.trade.dataloader.StockData;
 import com.lunye.mupup.trade.entity.Account;
 import com.lunye.mupup.trade.entity.TradeTax;
@@ -59,7 +60,7 @@ public class Main {
     }
 
     private static DataSource initDataSource() {
-        String excelFilePath = "历史数据.xlsx"; // Excel文件路径
+        String excelFilePath = ExcelParser.class.getClassLoader().getResource("stock_data.xlsx").getPath();
         List<StockData> stockDataList = parseExcel(excelFilePath);
         List<DailyRecord> dailyRecordList = stockDataList.stream().map(Main::convertDailyRecord).collect(Collectors.toList());
         DataSource dataSource = new DataSource();
