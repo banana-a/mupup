@@ -26,7 +26,7 @@ public class Account {
     private TradeTax tradeTax;
 
     // 总资产
-    private Double getAllAsserts(Double stockPrice){
+    public Double getAllAsserts(Double stockPrice){
         return stockPrice * stockCount + remainAssets;
     }
 
@@ -36,20 +36,26 @@ public class Account {
     }
 
     // 购买
-    public void buy(TradeActionParam param){
+    public boolean buy(TradeActionParam param){
         if (checkParam(param)){
             stockCount += param.getCount();
             remainAssets -= param.getPrice() * param.getCount();
             remainAssets -= getTex(param);
+            return true;
+        }else {
+            return false;
         }
     }
 
     // 售卖
-    public void sell(TradeActionParam param){
+    public boolean sell(TradeActionParam param){
         if (checkParam(param)){
             stockCount -= param.getCount();
             remainAssets += param.getPrice() * param.getCount();
             remainAssets -= getTex(param);
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -63,7 +69,12 @@ public class Account {
     }
 
     private boolean checkParam(TradeActionParam param) {
-        return true;
+        if (param.getTradeType() == 1){
+            return remainAssets > param.getCount() * param.getPrice();
+        }else if (param.getTradeType() == 2){
+            return stockCount >= param.getCount();
+        }
+        return false;
     }
 
 }

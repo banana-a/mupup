@@ -28,7 +28,7 @@ public class DefaultSellStrategy implements Strategy {
         Double startPrice = dailyRecord.getStartPrice();
 
         TradeActionParam param = new TradeActionParam();
-        param.setTradeType(1);
+        param.setTradeType(2);
 
         double originalPrice = startPrice * 1.01;
         double adjustedPrice = Math.floor(originalPrice * 1000) / 1000.0;

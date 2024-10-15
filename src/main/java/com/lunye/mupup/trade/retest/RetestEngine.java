@@ -18,6 +18,9 @@ public class RetestEngine {
             for (TradeActionParam actionParam : tradeActionParam) {
                 tradeManager.doTrade(context,i,actionParam);
             }
+            DailyRecord dailyRecord = context.getDataSource().getDailyRecordList().get(i);
+            Double allAsserts = context.getAccount().getAllAsserts(dailyRecord.getEndPrice());
+            System.out.printf("第%d天交易结束，总股数=%d，总资产=%.3f，仓位=%.3f %n", i, context.getAccount().getStockCount(), allAsserts, (dailyRecord.getEndPrice() * context.getAccount().getStockCount() / context.getAccount().getStartAssets()) * 100);
         }
 //        saveResult(context);
     }
