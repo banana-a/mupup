@@ -16,6 +16,9 @@ public class Account {
     // 股数
     private Integer stockCount;
 
+    // 持仓成本
+    private Double stockCost = 0.0;
+
     // 买记录
     private List<Double> buyRecord;
 
@@ -41,6 +44,8 @@ public class Account {
             stockCount += param.getCount();
             remainAssets -= param.getPrice() * param.getCount();
             remainAssets -= getTex(param);
+            stockCost += param.getPrice() * param.getCount();
+            stockCost += getTex(param);
             return true;
         }else {
             return false;
@@ -53,6 +58,7 @@ public class Account {
             stockCount -= param.getCount();
             remainAssets += param.getPrice() * param.getCount();
             remainAssets -= getTex(param);
+            stockCost = 0.0;
             return true;
         } else {
             return false;
@@ -75,6 +81,13 @@ public class Account {
             return stockCount >= param.getCount();
         }
         return false;
+    }
+
+    public Double getStockIncomeRate(Double stockPrice){
+        if (stockCost == null || stockCost == 0 || stockCount == null || stockCount == 0){
+            return 0.0;
+        }
+        return ((stockCount * stockPrice) - stockCost) / (stockCount * stockPrice);
     }
 
 }

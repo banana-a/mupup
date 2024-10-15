@@ -1,16 +1,12 @@
-package com.lunye.mupup.trade.strategy.sell;
+package com.lunye.mupup.trade.strategy.buy;
 
 import com.lunye.mupup.trade.TradeContext;
 import com.lunye.mupup.trade.entity.TradeActionParam;
-import com.lunye.mupup.trade.retest.DailyRecord;
 import com.lunye.mupup.trade.retest.RetestResult;
 import com.lunye.mupup.trade.strategy.Strategy;
 import com.lunye.mupup.trade.strategy.StrategyType;
 
-import java.util.List;
-
-public class DefaultSellStrategy implements Strategy {
-
+public class EveryDayBuyStrategy implements Strategy {
     @Override
     public StrategyType getStrategyType() {
         return StrategyType.TRADE_PROPOSAL;
@@ -21,10 +17,18 @@ public class DefaultSellStrategy implements Strategy {
         return 1;
     }
 
+    // 每天以开盘价 - 0.02 挂买单
     @Override
     public void exec(TradeContext context, int dateIndex) {
-        RetestResult result = context.getResult();
-        result.getActionResults().addAll(SellCommonUtil.getSellPriceActionParam(context));
-    }
+        TradeActionParam param = new TradeActionParam();
 
+        Double price = BuyCommonUtil.getBuyPriceStart(context);
+        Integer count = BuyCommonUtil.getBuyCount(price,1);
+
+        param.setTradeType(1);
+        param.setPrice(price);
+        param.setCount(count);
+        RetestResult result = context.getResult();
+        result.getActionResults().add(param);
+    }
 }

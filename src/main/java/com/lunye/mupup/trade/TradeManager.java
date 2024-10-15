@@ -2,6 +2,7 @@ package com.lunye.mupup.trade;
 
 import com.lunye.mupup.trade.entity.Account;
 import com.lunye.mupup.trade.entity.TradeActionParam;
+import com.lunye.mupup.trade.entity.TradeRecord;
 import com.lunye.mupup.trade.retest.DailyRecord;
 import lombok.Data;
 
@@ -29,10 +30,17 @@ public class TradeManager {
         Double price = param.getPrice();
         DailyRecord dailyRecord = context.getDataSource().getDailyRecordList().get(i);
         if (account.buy(param)){
-            System.out.printf("第%d天，尝试以%.3f价格买入成功，最高价为%.3f，最低价为%.3f%n", i, price, dailyRecord.getMaxPrice(), dailyRecord.getMinPrice());
+            context.getTradeRecordList().add(buildTradeRecord(param));
+            System.out.printf("%s，以%.3f价格买入成功，最高价为%.3f，最低价为%.3f%n", dailyRecord.getDate(), price, dailyRecord.getMaxPrice(), dailyRecord.getMinPrice());
         } else {
-            System.out.printf("第%d天，尝试以%.3f价格买入失败，最高价为%.3f，最低价为%.3f%n", i, price, dailyRecord.getMaxPrice(), dailyRecord.getMinPrice());
+            System.out.printf("%s，以%.3f价格买入失败，最高价为%.3f，最低价为%.3f%n", dailyRecord.getDate(), price, dailyRecord.getMaxPrice(), dailyRecord.getMinPrice());
         }
+    }
+
+    private static TradeRecord buildTradeRecord(TradeActionParam param) {
+        TradeRecord tradeRecord = new TradeRecord();
+        tradeRecord.setBuyActionParam(param);
+        return tradeRecord;
     }
 
     private static void sell(TradeContext context, int i, TradeActionParam param){
@@ -40,9 +48,9 @@ public class TradeManager {
         Double price = param.getPrice();
         DailyRecord dailyRecord = context.getDataSource().getDailyRecordList().get(i);
         if (account.sell(param)){
-            System.out.printf("第%d天，尝试以%.3f价格卖出成功，最高价为%.3f，最低价为%.3f%n", i, price, dailyRecord.getMaxPrice(), dailyRecord.getMinPrice());
+            System.out.printf("%s，以%.3f价格卖出成功，最高价为%.3f，最低价为%.3f%n", dailyRecord.getDate(), price, dailyRecord.getMaxPrice(), dailyRecord.getMinPrice());
         } else {
-            System.out.printf("第%d天，尝试以%.3f价格卖出失败，最高价为%.3f，最低价为%.3f%n", i, price, dailyRecord.getMaxPrice(), dailyRecord.getMinPrice());
+            System.out.printf("%s，以%.3f价格卖出失败，最高价为%.3f，最低价为%.3f%n", dailyRecord.getDate(), price, dailyRecord.getMaxPrice(), dailyRecord.getMinPrice());
         }
     }
 
