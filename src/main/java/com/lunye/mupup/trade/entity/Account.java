@@ -16,8 +16,8 @@ public class Account {
     // 股数
     private Integer stockCount;
 
-    // 可用股数
-    private Integer canUseStockCount;
+    // 持仓成本
+    private Double stockCost = 0.0;
 
     // 买记录
     private List<Double> buyRecord;
@@ -29,7 +29,7 @@ public class Account {
     private TradeTax tradeTax;
 
     // 总资产
-    private Double getAllAsserts(Double stockPrice){
+    public Double getAllAsserts(Double stockPrice){
         return stockPrice * stockCount + remainAssets;
     }
 
@@ -39,20 +39,29 @@ public class Account {
     }
 
     // 购买
-    public void buy(TradeActionParam param){
+    public boolean buy(TradeActionParam param){
         if (checkParam(param)){
             stockCount += param.getCount();
             remainAssets -= param.getPrice() * param.getCount();
             remainAssets -= getTex(param);
+            stockCost += param.getPrice() * param.getCount();
+            stockCost += getTex(param);
+            return true;
+        }else {
+            return false;
         }
     }
 
     // 售卖
-    public void sell(TradeActionParam param){
+    public boolean sell(TradeActionParam param){
         if (checkParam(param)){
             stockCount -= param.getCount();
             remainAssets += param.getPrice() * param.getCount();
             remainAssets -= getTex(param);
+            stockCost = 0.0;
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -66,7 +75,19 @@ public class Account {
     }
 
     private boolean checkParam(TradeActionParam param) {
-        return true;
+        if (param.getTradeType() == 1){
+            return remainAssets > param.getCount() * param.getPrice();
+        }else if (param.getTradeType() == 2){
+            return stockCount >= param.getCount();
+        }
+        return false;
+    }
+
+    public Double getStockIncomeRate(Double stockPrice){
+        if (stockCost == null || stockCost == 0 || stockCount == null || stockCount == 0){
+            return 0.0;
+        }
+        return ((stockCount * stockPrice) - stockCost) / (stockCount * stockPrice);
     }
 
 }

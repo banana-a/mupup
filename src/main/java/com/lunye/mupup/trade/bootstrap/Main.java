@@ -11,10 +11,12 @@ import com.lunye.mupup.trade.retest.RetestEngine;
 import com.lunye.mupup.trade.retest.RetestResult;
 import com.lunye.mupup.trade.strategy.Strategy;
 import com.lunye.mupup.trade.strategy.StrategyGroup;
-import com.lunye.mupup.trade.strategy.buy.DefaultBuyStrategy;
+import com.lunye.mupup.trade.strategy.buy.EveryDayBuyStrategy;
 import com.lunye.mupup.trade.strategy.sell.DefaultSellStrategy;
+import com.lunye.mupup.trade.strategy.sell.StockIncome10Strategy;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,15 +24,29 @@ import static com.lunye.mupup.trade.dataloader.ExcelParser.parseExcel;
 
 public class Main {
 
+    private static final String Date1 = "2024-04-13";
+    private static final String Date2 = "2021-12-12";
+    private static final String Date3 = "2023-08-26";
+
     private static final Double StartAssert = 1000000.0;
     private static final Double Tax1 = 0.0002;
     private static final Double Tax2 = 0.0005;
     private static final Double Tax3 = 0.00001;
+    private static final String StartDate = Date1;
 
     public static void main(String[] args) {
         RetestEngine retestEngine = new RetestEngine();
         TradeContext tradeContext = initContext();
-        retestEngine.doRetest(tradeContext);
+        retestEngine.doRetest(tradeContext,StartDate);
+    }
+
+    private static StrategyGroup initStrategyGroup() {
+        StrategyGroup sg = new StrategyGroup();
+        List<Strategy> strategyList = new ArrayList<>();
+        strategyList.add(new EveryDayBuyStrategy());
+        strategyList.add(new DefaultSellStrategy());
+        sg.setStrategyList(strategyList);
+        return sg;
     }
 
     private static TradeContext initContext() {
@@ -39,6 +55,7 @@ public class Main {
         tradeContext.setDataSource(initDataSource());
         tradeContext.setStrategyGroup(initStrategyGroup());
         tradeContext.setResult(initRetestResult());
+        tradeContext.setTradeRecordList(new ArrayList<>());
         return tradeContext;
     }
 
@@ -63,6 +80,9 @@ public class Main {
         String excelFilePath = ExcelParser.class.getClassLoader().getResource("stock_data.xlsx").getPath();
         List<StockData> stockDataList = parseExcel(excelFilePath);
         List<DailyRecord> dailyRecordList = stockDataList.stream().map(Main::convertDailyRecord).collect(Collectors.toList());
+        for (int i = 1; i < dailyRecordList.size(); i++) {
+            dailyRecordList.get(i).setStartPosition(dailyRecordList.get(i).getEndPrice() / dailyRecordList.get(i - 1).getStartPrice() - 1);
+        }
         DataSource dataSource = new DataSource();
         dataSource.setDailyRecordList(dailyRecordList);
         return dataSource;
@@ -77,16 +97,6 @@ public class Main {
         dailyRecord.setMinPrice(item.getLow());
         return dailyRecord;
     }
-
-    private static StrategyGroup initStrategyGroup() {
-        StrategyGroup sg = new StrategyGroup();
-        List<Strategy> strategyList = new ArrayList<>();
-        strategyList.add(new DefaultBuyStrategy());
-        strategyList.add(new DefaultSellStrategy());
-        sg.setStrategyList(strategyList);
-        return sg;
-    }
-
 
     private static RetestResult initRetestResult() {
         RetestResult result = new RetestResult();
